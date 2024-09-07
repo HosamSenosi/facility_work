@@ -283,32 +283,6 @@ if page == 'Event Logging':
                     mime='text/csv'
                 )
 
-            ## Uncomment the following to enable both Excel and CSV download
-            ##  and don't forget to remove the CSV download button above
-            
-            # Prepare Excel data for download
-            # excel_buffer = io.BytesIO()
-            # with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
-            #     df.to_excel(writer, index=False, sheet_name='Sheet1')
-            # excel_data = excel_buffer.getvalue()
-
-            # # Download buttons
-            # col1, col2 = st.columns(2)
-            # with col1:
-            #     st.download_button(
-            #         label="Download Checklist as CSV",
-            #         data=csv_data,
-            #         file_name='checklist_records.csv',
-            #         mime='text/csv'
-            #     )
-            # with col2:
-            #     st.download_button(
-            #         label="Download Checklist as Excel",
-            #         data=excel_data,
-            #         file_name='checklist_records.xlsx',
-            #         mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            #     )
-
         else:
             st.write("No checklist data available.")
         
