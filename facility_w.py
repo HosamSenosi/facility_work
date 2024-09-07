@@ -7,6 +7,7 @@ import io
 from io import BytesIO
 import git_backend as gb
 import os
+import base64
 
 # Streamlit page configuration
 st.set_page_config(
@@ -207,11 +208,12 @@ if page == 'Event Logging':
                 risk = None
     
             if st.button(f'Add {category}', key=f"add_{category}_{selected_location}"):
+                    length = len(st.session_state.checklist_df)
                     if Rating in [0, 'N/A']:
-                        event_id = 'check'
+                        event_id = 'check' + str(length + 1)
                         risk_value = ''
                     else:
-                        event_id = 'Work Order ' + str(len(st.session_state.checklist_df) + 1)
+                        event_id = 'work_order' + str(length + 1)
                         risk_value = 'Yes' if risk else 'No'
 
                     image_path = ""
@@ -222,14 +224,19 @@ if page == 'Event Logging':
                                 image = image.convert("RGB")
                             max_size = (800, 600)
                             image.thumbnail(max_size)
-                            image_filename = os.path.join('uploaded_images', f"{event_id}.jpg")
-                            image.save(image_filename, optimize=True, quality=85)
-                            image_path = image_filename
-                            st.success(f"Image saved successfully as {uploaded_file.name}")
+                            image_buffer = BytesIO()
+                            image.save(image_buffer, format="JPEG")
+                            image_data = image_buffer.getvalue()
+                            image_name = f"{event_id}.jpg"
+                            image_path = gb.save_image(image_data, image_name)
+                            if image_path:
+                                st.success(f"Image saved successfully as {image_name}")
+                            else:
+                                st.error("Failed to save the image")
                         except Exception as e:
                             st.error(f"An error occurred while saving the image: {str(e)}")
                             image_path = ""
-
+                 
                     new_record = {
                         'id': event_id,
                         'location': selected_location,
@@ -367,13 +374,36 @@ if page == 'Work Shop Order':
             # عرض تفاصيل الحدث ك DataFrame
             st.dataframe(selected_event)
 
-            # عرض الصورة إذا كانت موجودة
-            image_path = selected_event['image']
-            if isinstance(image_path, str) and image_path and os.path.exists(image_path):
-                st.image(image_path, caption=f'Image for Event {selected_event["id"]}', width=300)
+            # Display the image if it exists
+            image_path = selected_event['image'].iloc[0]
+            if image_path:
+                try:
+                    # Get the encoded image content from GitHub
+                    image_content = gb.repo.get_contents(image_path)
+                    
+                    # The content is already base64 encoded, so we don't need to encode it again
+                    image_data = base64.b64decode(image_content.content)
+                    
+                    # Open the image using PIL
+                    image = Image.open(BytesIO(image_data))
+                    if image.mode != 'RGB':
+                         image = image.convert('RGB')
+                         
+                    # Display the image
+                    st.image(image, caption=f'Image for Event {selected_event["id"].values[0]}', use_column_width=True)
+                
+                except Exception as e:
+                    st.warning(f"Error loading image: {str(e)}")
+                    st.write("Debug info:")
+                    st.write(f"Image path: {image_path}")
+                    if 'image_content' in locals():
+                        st.write(f"Content type: {type(image_content.content)}")
+                        st.write(f"Content length: {len(image_content.content)}")
+                        st.write(f"First 100 characters of content: {image_content.content[:100]}")
+                    else:
+                        st.write("Failed to retrieve image_content")
             else:
-                st.warning("Image not found or path is invalid.")
-
+                st.warning("No image available for this event.")
         else:
             st.warning("Select an event to view details.")
 

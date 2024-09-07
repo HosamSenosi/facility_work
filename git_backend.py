@@ -4,6 +4,7 @@ from github import Github
 import streamlit as st
 import uuid
 from datetime import datetime
+import base64
 
 # GitHub setup
 g = Github(st.secrets["GITHUB_TOKEN"])
@@ -25,6 +26,22 @@ def save_data(file_path, data):
         repo.update_file(file_path, f"Update {file_path}", json.dumps(data, indent=2), content.sha)
     except:
         repo.create_file(file_path, f"Create {file_path}", json.dumps(data, indent=2))
+
+
+# Handle Images
+def save_image(image_data, image_name):
+    try:
+        image_path = f"images/{image_name}"
+        encoded_image = base64.b64encode(image_data).decode()
+        try:
+            content = repo.get_contents(image_path)
+            repo.update_file(image_path, f"Update {image_name}", encoded_image, content.sha)
+        except:
+            repo.create_file(image_path, f"Create {image_name}", encoded_image)
+        return image_path
+    except Exception as e:
+        st.error(f"Error saving image: {str(e)}")
+        return None
 
 # Checklist CRUD operations
 def create_checklist_record(record):
