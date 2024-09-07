@@ -32,7 +32,9 @@ def save_data(file_path, data):
 def save_image(image_data, image_name):
     try:
         image_path = f"images/{image_name}"
-        encoded_image = base64.b64encode(image_data).decode()
+        encoded_image = base64.b64encode(image_data)
+        print(f"### \n Encoded Image data !! : { encoded_image[:50] } \n ###")
+
         try:
             content = repo.get_contents(image_path)
             repo.update_file(image_path, f"Update {image_name}", encoded_image, content.sha)

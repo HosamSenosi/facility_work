@@ -159,8 +159,6 @@ if page == 'Event Logging':
     st.session_state.refreshed = True
     
     
-    image_save_path = 'uploaded_images'
-    os.makedirs(image_save_path, exist_ok=True)
     
     col1, col2 = st.columns([2, 6])
     
@@ -227,7 +225,9 @@ if page == 'Event Logging':
                             image_buffer = BytesIO()
                             image.save(image_buffer, format="JPEG")
                             image_data = image_buffer.getvalue()
-                            image_name = f"{event_id}.jpg"
+                            ext=uploaded_file.name.split('.')[-1]
+                            image_name = f"{event_id}.txt"
+                            print(f"### \n Image data before encoding !! : {image_data[:50] } \n ###### ")
                             image_path = gb.save_image(image_data, image_name)
                             if image_path:
                                 st.success(f"Image saved successfully as {image_name}")
@@ -378,30 +378,18 @@ if page == 'Work Shop Order':
             image_path = selected_event['image'].iloc[0]
             if image_path:
                 try:
-                    # Get the encoded image content from GitHub
+                    # Get the encoded image content from GitHub 
                     image_content = gb.repo.get_contents(image_path)
-                    
-                    # The content is already base64 encoded, so we don't need to encode it again
-                    image_data = base64.b64decode(image_content.content)
+                    decoded_image_data = base64.b64decode(image_content.decoded_content)
                     
                     # Open the image using PIL
-                    image = Image.open(BytesIO(image_data))
-                    if image.mode != 'RGB':
-                         image = image.convert('RGB')
+                    image = Image.open(BytesIO(decoded_image_data))
                          
                     # Display the image
                     st.image(image, caption=f'Image for Event {selected_event["id"].values[0]}', use_column_width=True)
                 
                 except Exception as e:
                     st.warning(f"Error loading image: {str(e)}")
-                    st.write("Debug info:")
-                    st.write(f"Image path: {image_path}")
-                    if 'image_content' in locals():
-                        st.write(f"Content type: {type(image_content.content)}")
-                        st.write(f"Content length: {len(image_content.content)}")
-                        st.write(f"First 100 characters of content: {image_content.content[:100]}")
-                    else:
-                        st.write("Failed to retrieve image_content")
             else:
                 st.warning("No image available for this event.")
         else:
