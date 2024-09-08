@@ -72,11 +72,11 @@ def update_checklist_record(record_id, updated_data):
             return record
     return None
 
-# Not used yet
-def delete_checklist_record(record_id):
-    data = load_data("checklist.json")
-    data["records"] = [record for record in data["records"] if record["id"] != record_id]
-    save_data("checklist.json", data)
+# # Not used yet
+# def delete_checklist_record(record_id):
+#     data = load_data("checklist.json")
+#     data["records"] = [record for record in data["records"] if record["id"] != record_id]
+#     save_data("checklist.json", data)
 
 
 # Change Log CRUD operations
@@ -93,17 +93,18 @@ def create_change_log_entry(entry):
     save_data("change_log.json", data)
     return new_entry
 
-# Not used yet | I think it will never be used
-def update_change_log_entry(entry_id, updated_data):
-    data = load_data("change_log.json")
-    for entry in data["logs"]:
-        if entry["id"] == entry_id:
-            entry.update(updated_data)
-            save_data("change_log.json", data)
-            return entry
-    return None
+# # Not used yet | I think it will never be used
+# def update_change_log_entry(entry_id, updated_data):
+#     data = load_data("change_log.json")
+#     for entry in data["logs"]:
+#         if entry["id"] == entry_id:
+#             entry.update(updated_data)
+#             save_data("change_log.json", data)
+#             return entry
+#     return None
 
-def delete_change_log_entry(entry_id):
-    data = load_data("change_log.json")
-    data["logs"] = [entry for entry in data["logs"] if entry["id"] != entry_id]
-    save_data("change_log.json", data)
+# # Not used
+# def delete_change_log_entry(entry_id):
+#     data = load_data("change_log.json")
+#     data["logs"] = [entry for entry in data["logs"] if entry["id"] != entry_id]
+#     save_data("change_log.json", data)
