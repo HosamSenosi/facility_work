@@ -227,7 +227,6 @@ if page == 'Event Logging':
                             image_data = image_buffer.getvalue()
                             ext=uploaded_file.name.split('.')[-1]
                             image_name = f"{event_id}.txt"
-                            print(f"### \n Image data before encoding !! : {image_data[:50] } \n ###### ")
                             image_path = gb.save_image(image_data, image_name)
                             if image_path:
                                 st.success(f"Image saved successfully as {image_name}")
@@ -242,7 +241,7 @@ if page == 'Event Logging':
                         'location': selected_location,
                         'element': category,
                         'eventDetectorName': Event_Detector_Name,
-                        'date': datetime.now(egypt_tz).isoformat(),
+                        'date': datetime.now(egypt_tz).strftime("%Y-%m-%d %H:%M:%S"),
                         'rating': Rating,
                         'comment': comment,
                         'responsiblePerson': responsible_person,
@@ -332,32 +331,32 @@ if page == 'Work Shop Order':
                     if update_start_button:
                         if selected_event_id in st.session_state.checklist_df['id'].values:
                             updated_data = {
-                                'expectedRepairDate': Expected_repair_Date.isoformat()
+                                'expectedRepairDate': Expected_repair_Date.strftime("%Y-%m-%d %H:%M:%S")
                             }
                             gb.update_checklist_record(selected_event_id, updated_data)
                             st.success('Expected repair Date Updated successfully')
                             
                             new_log_entry = {
                                 'modifierName': modifier_name,
-                                'modificationDate': datetime.now(egypt_tz).isoformat(),
+                                'modificationDate': datetime.now(egypt_tz).strftime("%Y-%m-%d %H:%M:%S"),
                                 'modificationType': 'update Expected repair Date',
-                                'newDate': Expected_repair_Date.isoformat()
+                                'newDate': Expected_repair_Date.strftime("%Y-%m-%d %H:%M:%S")
                             }
                             gb.create_change_log_entry(new_log_entry)
 
                     if update_end_button:
                         if selected_event_id in st.session_state.checklist_df['id'].values:
                             updated_data = {
-                                'actualRepairDate': Actual_Repair_Date.isoformat()
+                                'actualRepairDate': Actual_Repair_Date.strftime("%Y-%m-%d %H:%M:%S")
                             }
                             gb.update_checklist_record(selected_event_id, updated_data)
                             st.success('Actual Repair Date Updated successfully')
                             
                             new_log_entry = {
                                 'modifierName': modifier_name,
-                                'modificationDate': datetime.now(egypt_tz).isoformat(),
+                                'modificationDate': datetime.now(egypt_tz).strftime("%Y-%m-%d %H:%M:%S"),
                                 'modificationType': 'update Actual Repair Date',
-                                'newDate': Actual_Repair_Date.isoformat()
+                                'newDate': Actual_Repair_Date.strftime("%Y-%m-%d %H:%M:%S")
                             }
                             gb.create_change_log_entry(new_log_entry)
                             

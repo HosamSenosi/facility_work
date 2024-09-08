@@ -31,7 +31,6 @@ def save_image(image_data, image_name):
     try:
         image_path = f"images/{image_name}"
         encoded_image = base64.b64encode(image_data)
-        print(f"### \n Encoded Image data !! : { encoded_image[:50] } \n ###")
 
         try:
             content = repo.get_contents(image_path)
@@ -47,11 +46,11 @@ def save_image(image_data, image_name):
 def create_checklist_record(record):
     data = load_data("checklist.json")
     new_record = {
-        "id": str(len(data["records"]) + 1),
+        "id": record.get("id", str(len(data["records"]) + 1)),
         "location": record.get("location", ""),
         "element": record.get("element", ""),
         "eventDetectorName": record.get("eventDetectorName", ""),
-        "date": record.get("date"),
+        "date": record.get("date",""),
         "rating": record.get("rating", ""),
         "responsiblePerson": record.get("responsiblePerson", ""),
         "expectedRepairDate": record.get("expectedRepairDate", ""),
