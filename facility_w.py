@@ -328,7 +328,7 @@ if page == 'Work Shop Order':
                     update_start_button = st.button('Update Expected repair Date')
                     update_end_button = st.button('Update Actual Repair Date')
 
-                    # Updated !
+                    
                     if update_start_button:
                         if selected_event_id in st.session_state.checklist_df['id'].values:
                             updated_data = {
@@ -423,6 +423,19 @@ elif page == 'Clear data':
         gb.save_data("checklist.json", {"records": []})
         st.session_state.checklist_df = load_checklist_data()
         st.success('Checklist data cleared!')
+        # Delete all files in the images folder
+        try:
+            contents = gb.repo.get_dir_contents("images")
+            for content_file in contents:
+                gb.repo.delete_file(
+                    content_file.path,
+                    "Deleting image file",
+                    content_file.sha
+                )
+            st.success('Checklist data and all images cleared!')
+        except Exception as e:
+            st.warning(f"Error clearing images: {str(e)}")
+            st.success('Checklist data cleared, but there was an issue clearing images.')
 
     if st.button('Clear Log Data'):
         gb.save_data("change_log.json", {"logs": []})

@@ -1,9 +1,7 @@
 import json
-import os
 from github import Github
 import streamlit as st
-import uuid
-from datetime import datetime
+#import uuid
 import base64
 
 # GitHub setup
@@ -53,7 +51,7 @@ def create_checklist_record(record):
         "location": record.get("location", ""),
         "element": record.get("element", ""),
         "eventDetectorName": record.get("eventDetectorName", ""),
-        "date": record.get("date", datetime.now().isoformat()),
+        "date": record.get("date"),
         "rating": record.get("rating", ""),
         "responsiblePerson": record.get("responsiblePerson", ""),
         "expectedRepairDate": record.get("expectedRepairDate", ""),
@@ -75,10 +73,12 @@ def update_checklist_record(record_id, updated_data):
             return record
     return None
 
+# Not used yet
 def delete_checklist_record(record_id):
     data = load_data("checklist.json")
     data["records"] = [record for record in data["records"] if record["id"] != record_id]
     save_data("checklist.json", data)
+
 
 # Change Log CRUD operations
 def create_change_log_entry(entry):
@@ -86,7 +86,7 @@ def create_change_log_entry(entry):
     new_entry = {
         "id": str(len(data["logs"]) + 1),
         "modifierName": entry.get("modifierName", ""),
-        "modificationDate": entry.get("modificationDate", datetime.now().isoformat()),
+        "modificationDate": entry.get("modificationDate"),
         "modificationType": entry.get("modificationType", ""),
         "newDate": entry.get("newDate", "")
     }
@@ -94,6 +94,7 @@ def create_change_log_entry(entry):
     save_data("change_log.json", data)
     return new_entry
 
+# Not used yet | I think it will never be used
 def update_change_log_entry(entry_id, updated_data):
     data = load_data("change_log.json")
     for entry in data["logs"]:
